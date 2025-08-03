@@ -7,7 +7,7 @@ const apiClient = axios.create({
   },
 });
 
-// 🔑 Interceptor para tratar erros globais
+
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -29,15 +29,15 @@ apiClient.interceptors.response.use(
   }
 );
 
-// 🔑 Função de login
+
 export const loginRequest = async (data) => {
   try {
     const response = await apiClient.post("api/auth/login", data);
 
-    // Supondo que a API retorne { token: "...", user: {...} }
-    const { token, user } = response.data;
+ 
+    const { token} = response.data;
 
-    return { token, user };
+    return { token };
   } catch (error) {
     throw error;
   }

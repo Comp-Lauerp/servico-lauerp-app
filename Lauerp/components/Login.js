@@ -7,13 +7,11 @@ import {
   Text,
   Alert,
   Image,
-  ActivityIndicator, // Adicionado para feedback de carregamento
+  ActivityIndicator,
 } from 'react-native';
 
-// Importa o hook de navegação
 import { useNavigation } from '@react-navigation/native';
-
-// Supondo que sua função de API se chame 'loginRequest'
+import { jwtDecode } from 'jwt-decode';
 import { loginRequest } from '../services/api';
 
 export default function Login() {
@@ -22,9 +20,9 @@ export default function Login() {
   // Renomeado para 'email' para maior clareza
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const [isLoading, setIsLoading] = useState(false); // Estado para controlar o carregamento
+  const [isLoading, setIsLoading] = useState(false);
 
-   const handleLogin = async () => {
+  const handleLogin = async () => {
     if (!email || !senha) {
       Alert.alert("Atenção", "Por favor, preencha seu e-mail e senha.");
       return;
@@ -34,10 +32,30 @@ export default function Login() {
 
     try {
       const data = { email, senha };
-      const { token, user } = await loginRequest(data);
+      const { token } = await loginRequest(data);
 
+      console.log(token)
+      const decoded = jwtDecode(token);
+      const tipoUsuario = decoded?.role || decoded?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+
+      console.log("Tipo do usuário:", tipoUsuario);
       Alert.alert("Sucesso", "Login realizado com sucesso!");
-      navigation.navigate("Home", { user });
+
+      switch (tipoUsuario) {
+        case 'Admin':
+          navigation.navigate("HomeAdmin", decoded?.nome);
+          break;
+        case 'Jogador':
+          navigation.navigate("HomeAluno", decoded?.nome);
+          break;
+        case 'Professor':
+          navigation.navigate("HomeGestor", decoded?.nome);
+          break;
+        default:
+          Alert.alert("Erro", "Tivemos um erro ao identificar seu usuario.");
+      }
+
+      navigation.navigate("Home", { tipoUsuario });
     } catch (error) {
       console.error("Erro no login:", error.response?.data || error.message);
       Alert.alert("Erro no Login", "E-mail ou senha inválidos. Por favor, tente novamente.");
@@ -45,7 +63,7 @@ export default function Login() {
       setIsLoading(false);
     }
   };
-  
+
   const handleForgotPassword = () => {
     Alert.alert('Recuperação de senha', 'Funcionalidade ainda não implementada.');
   };

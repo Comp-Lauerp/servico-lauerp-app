@@ -3,7 +3,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import 'react-native-gesture-handler';
 import Login from './components/Login';
 import ChamadaJogadores from './components/Chamada';
-import Home from './components/Home';
+import Home from './components/Home/Home';
+import HomeAdmin from './components/Home/HomeAdmin';
 import Calendario from './components/Calendario'
 import StatusAlunos from './components/Alunos'
 
@@ -20,11 +21,11 @@ export default function App() {
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="Home"
-          component={Home}
+          name="HomeAdmin"
+          component={HomeAdmin}
           options={{ headerShown: false }}
         />
-       
+
         <Stack.Screen
           name="Chamada"
           component={ChamadaJogadores}
