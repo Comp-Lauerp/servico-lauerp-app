@@ -13,7 +13,7 @@ const Stack = createStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Calendario">
+      <Stack.Navigator initialRouteName="Login">
         <Stack.Screen
           name="Login"
           component={Login}
@@ -24,7 +24,7 @@ export default function App() {
           component={Home}
           options={{ headerShown: false }}
         />
-        {/* CHAMADA E CALENDARIO NÃO FUNCIONANDO */}
+       
         <Stack.Screen
           name="Chamada"
           component={ChamadaJogadores}

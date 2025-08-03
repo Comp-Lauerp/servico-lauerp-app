@@ -7,20 +7,45 @@ import {
   Text,
   Alert,
   Image,
+  ActivityIndicator, // Adicionado para feedback de carregamento
 } from 'react-native';
 
-export default function Login() {
-  const [matricula, setMatricula] = useState('');
-  const [senha, setSenha] = useState('');
+// Importa o hook de navegação
+import { useNavigation } from '@react-navigation/native';
 
-  const handleLogin = () => {
-    if (!matricula || !senha) {
-      Alert.alert('Erro', 'Por favor, preencha todos os campos.');
-    } else {
-      Alert.alert('Sucesso', `Bem-vindo(a), ${matricula}!`);
+// Supondo que sua função de API se chame 'loginRequest'
+import { loginRequest } from '../services/api';
+
+export default function Login() {
+  const navigation = useNavigation();
+
+  // Renomeado para 'email' para maior clareza
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // Estado para controlar o carregamento
+
+   const handleLogin = async () => {
+    if (!email || !senha) {
+      Alert.alert("Atenção", "Por favor, preencha seu e-mail e senha.");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const data = { email, senha };
+      const { token, user } = await loginRequest(data);
+
+      Alert.alert("Sucesso", "Login realizado com sucesso!");
+      navigation.navigate("Home", { user });
+    } catch (error) {
+      console.error("Erro no login:", error.response?.data || error.message);
+      Alert.alert("Erro no Login", "E-mail ou senha inválidos. Por favor, tente novamente.");
+    } finally {
+      setIsLoading(false);
     }
   };
-
+  
   const handleForgotPassword = () => {
     Alert.alert('Recuperação de senha', 'Funcionalidade ainda não implementada.');
   };
@@ -33,14 +58,15 @@ export default function Login() {
         resizeMode="contain"
       />
 
-      <Text style={styles.label}>Matrícula:</Text>
+      <Text style={styles.label}>E-mail:</Text>
       <TextInput
         style={styles.input}
-        placeholder="Digite sua matrícula"
-        value={matricula}
-        onChangeText={setMatricula}
+        placeholder="Digite seu e-mail"
+        value={email}
+        onChangeText={setEmail}
         autoCapitalize="none"
-        keyboardType="numeric"
+        keyboardType="email-address"
+        editable={!isLoading}
       />
 
       <Text style={styles.label}>Senha:</Text>
@@ -50,13 +76,23 @@ export default function Login() {
         value={senha}
         onChangeText={setSenha}
         secureTextEntry
+        editable={!isLoading}
       />
 
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Entrar</Text>
+      {/* O botão agora mostra um indicador de atividade quando está carregando */}
+      <TouchableOpacity
+        style={[styles.button, isLoading && styles.buttonDisabled]}
+        onPress={handleLogin}
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <ActivityIndicator size="small" color="#000" />
+        ) : (
+          <Text style={styles.buttonText}>Entrar</Text>
+        )}
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={handleForgotPassword}>
+      <TouchableOpacity onPress={handleForgotPassword} disabled={isLoading}>
         <Text style={styles.forgotPassword}>Esqueci minha senha</Text>
       </TouchableOpacity>
     </View>
@@ -71,8 +107,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#f4f4f4',
   },
   logo: {
-    width: '100%',
-    height: 300,
+    width: '80%',
+    height: 150,
     alignSelf: 'center',
     marginBottom: 32,
   },
@@ -80,6 +116,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     marginBottom: 8,
+    color: '#333',
   },
   input: {
     height: 48,
@@ -89,6 +126,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 8,
     backgroundColor: '#fff',
+    fontSize: 16,
   },
   button: {
     backgroundColor: '#F2BD1D',
@@ -96,6 +134,11 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     marginTop: 8,
     marginBottom: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonDisabled: {
+    backgroundColor: '#F2BD1D_80', // Cor com opacidade para indicar que está desabilitado
   },
   buttonText: {
     color: '#000',
