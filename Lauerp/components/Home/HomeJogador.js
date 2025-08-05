@@ -8,12 +8,9 @@ const dia = String(hoje.getDate()).padStart(2, '0');
 const mes = String(hoje.getMonth() + 1).padStart(2, '0');
 const dataAtual = `${dia}/${mes}`;
 
+export default function HomeJogador() {
 
-
-export default function HomeAdmin() {
-  const route = useRoute();
-  const { nomeUsuario } = route.params || {};
-  console.log(nomeUsuario);
+  
   return (
     <View style={estilos.container}>
       <View style={estilos.cabecalho}>
@@ -31,19 +28,10 @@ export default function HomeAdmin() {
       </View>
 
       <TouchableOpacity style={[estilos.botao, { backgroundColor: '#FACC15' }]}>
-        <FontAwesome5 name="chart-bar" size={24} color="white" style={estilos.icone} />
-        <Text style={estilos.textoBotao}>Relatórios</Text>
+        <FontAwesome5 name="users" size={24} color="white" style={estilos.icone} />
+        <Text style={estilos.textoBotao}>Presenca</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={[estilos.botao, { backgroundColor: '#FB923C' }]}>
-        <Entypo name="users" size={24} color="white" style={estilos.icone} />
-        <Text style={estilos.textoBotao}>Chamada</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={[estilos.botao, { backgroundColor: '#DC2626' }]}>
-        <MaterialIcons name="menu-book" size={24} color="white" style={estilos.icone} />
-        <Text style={estilos.textoBotao}>Alunos</Text>
-      </TouchableOpacity>
 
       <TouchableOpacity style={[estilos.botao, { backgroundColor: '#450A0A' }]}>
         <FontAwesome5 name="calendar-alt" size={24} color="white" style={estilos.icone} />

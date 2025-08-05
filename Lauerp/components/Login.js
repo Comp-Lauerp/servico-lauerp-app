@@ -43,13 +43,13 @@ export default function Login() {
 
       switch (tipoUsuario) {
         case 'Admin':
-          navigation.navigate("HomeAdmin", decoded?.nome);
+          navigation.navigate("HomeJogador", decoded?.nome);
           break;
         case 'Jogador':
-          navigation.navigate("HomeAluno", decoded?.nome);
+          navigation.navigate("HomeJogador", decoded?.nome);
           break;
         case 'Professor':
-          navigation.navigate("HomeGestor", decoded?.nome);
+          navigation.navigate("HomeProfessor", decoded?.nome);
           break;
         default:
           Alert.alert("Erro", "Tivemos um erro ao identificar seu usuario.");
